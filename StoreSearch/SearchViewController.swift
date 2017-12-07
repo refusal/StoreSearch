@@ -18,7 +18,13 @@ class SearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        var cellNib = UINib(nibName: TableViewCellIdentifiers.searchResultCell, bundle: nil)
+        tableView.register(cellNib, forCellReuseIdentifier: TableViewCellIdentifiers.searchResultCell)
+        
+        cellNib = UINib(nibName: TableViewCellIdentifiers.nothingFoundCell, bundle: nil)
+        tableView.register(cellNib, forCellReuseIdentifier: TableViewCellIdentifiers.nothingFoundCell)
+        tableView.rowHeight = tableView.estimatedRowHeight
     }
 
     override func didReceiveMemoryWarning() {
@@ -57,26 +63,16 @@ extension SearchViewController : UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellIdentifier = "SearchResultCell"
-        
-        var cell: UITableViewCell! = tableView.dequeueReusableCell(withIdentifier: cellIdentifier)
-        
-        
-        if cell == nil{
-            cell = UITableViewCell(style: .subtitle, reuseIdentifier: cellIdentifier)
-        }
         
         if searchResults.count == 0 {
-            cell.textLabel!.text = "Nothing found"
-            cell.detailTextLabel!.text = ""
-        } else{
-            cell.textLabel!.text = searchResults[indexPath.row].name
-            cell.detailTextLabel!.text = searchResults[indexPath.row].artistName
+            return tableView.dequeueReusableCell(withIdentifier: TableViewCellIdentifiers.nothingFoundCell) as! NothingFoundCell
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: TableViewCellIdentifiers.searchResultCell) as! SearchResultCell
+            cell.nameLabel!.text = searchResults[indexPath.row].name
+            cell.artistNameLabel!.text = searchResults[indexPath.row].artistName
+            return cell
         }
-       
-        return cell
     }
-    
 }
 
 extension SearchViewController : UISearchBarDelegate{
@@ -102,5 +98,10 @@ extension SearchViewController : UISearchBarDelegate{
         }
         tableView.reloadData()
     }
+}
+
+struct TableViewCellIdentifiers{
+    static let searchResultCell = "SearchResultCell"
+    static let nothingFoundCell = "NothingFoundCell"
 }
 
