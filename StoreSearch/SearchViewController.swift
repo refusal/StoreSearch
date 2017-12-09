@@ -33,6 +33,12 @@ class SearchViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    func ITunesUrl(searchText: Stiring)-> URL {
+        let urlString = String(format: "https://itunes.apple.com/search?term=%@", searchText)
+        let url = URL(fileURLWithPath: urlString)
+        return url!
+    }
 }
 
 extension SearchViewController : UITableViewDelegate{
@@ -84,21 +90,15 @@ extension SearchViewController : UISearchBarDelegate{
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar){
-        
-        hasSearched = true
-        searchBar.resignFirstResponder()
-        searchResults = []
-        
-        if searchBar.text != "111"
-        {
-        for i in 0...2{
-            let searchResult = SearchResult()
-            searchResult.name = String(format:"Fake Result %d for", i)
-            searchResult.artistName = searchBar.text!
-            searchResults.append(searchResult)
-            }
+        if !searchBar.text!.isEmpty {
+            searchBar.resignFirstResponder()
+            
+            hasSearched = true
+            searchResults = []
+            let url = ITunesUrl(searchText: searchBar.text!)
+            print("URL: \(url)")
+            tableView.reloadData()
         }
-        tableView.reloadData()
     }
 }
 
